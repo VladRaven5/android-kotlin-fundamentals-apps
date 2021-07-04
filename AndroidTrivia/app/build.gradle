@@ -31,6 +31,11 @@ android {
         vectorDrawables.useSupportLibrary = true
         versionCode 1
         versionName "1.0"
+
+        buildConfigField "java.util.concurrent.atomic.AtomicBoolean", "IS_TESTING", "new java.util.concurrent.atomic.AtomicBoolean(false)"
+
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunnerArguments(clearPackageData: "true")
     }
     buildTypes {
         release {
@@ -42,6 +47,21 @@ android {
     }
     buildFeatures {
         dataBinding true
+    }
+
+    testOptions {
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
+        reportDir = "$rootDir/test-reports"
+
+        unitTests {
+            includeAndroidResources = true
+
+            all {
+                testLogging {
+                    events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+                }
+            }
+        }
     }
 }
 
@@ -56,4 +76,20 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
     implementation "com.google.android.material:material:$supportlibVersion"
+
+    testImplementation "org.hamcrest:hamcrest-all:$hamcrestVersion"
+    testImplementation "androidx.arch.core:core-testing:$archTestingVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:$espressoVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-intents:$espressoVersion"
+    androidTestImplementation "androidx.test.espresso.idling:idling-concurrent:$espressoVersion"
+    implementation "androidx.test.espresso:espresso-idling-resource:$espressoVersion"
+    androidTestImplementation "androidx.test.ext:junit-ktx:$androidXTestExtKotlinRunnerVersion"
+    androidTestImplementation "com.kaspersky.android-components:kaspresso:$kaspressoVersion"
+    androidTestImplementation "androidx.test:rules:$androidXTestRulesVersion"
+
+    //test orchestrator fix for Android API 30 https://github.com/android/android-test/issues/743#issuecomment-851475741
+    androidTestImplementation 'androidx.test:core-ktx:1.4.0-alpha04'
+    androidTestImplementation 'androidx.test:runner:1.4.0-alpha04'
+    androidTestUtil 'androidx.test:orchestrator:1.4.0-alpha04'
 }
