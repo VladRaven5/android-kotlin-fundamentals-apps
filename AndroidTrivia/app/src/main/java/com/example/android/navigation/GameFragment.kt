@@ -25,6 +25,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.android.navigation.databinding.FragmentGameBinding
+import java.util.*
 
 class GameFragment : Fragment() {
     data class Question(
@@ -116,7 +117,10 @@ class GameFragment : Fragment() {
 
     // randomize the questions and set the first question
     private fun randomizeQuestions() {
-        questions.shuffle()
+        if(BuildConfig.IS_TESTING.get())
+            questions.shuffle(Random(5))
+        else
+            questions.shuffle()
         questionIndex = 0
         setQuestion()
     }
@@ -128,7 +132,10 @@ class GameFragment : Fragment() {
         // randomize the answers into a copy of the array
         answers = currentQuestion.answers.toMutableList()
         // and shuffle them
-        answers.shuffle()
+        if(BuildConfig.IS_TESTING.get())
+            answers.shuffle(Random(5))
+        else
+            answers.shuffle()
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.title_android_trivia_question, questionIndex + 1, numQuestions)
     }
 }
